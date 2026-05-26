@@ -20,7 +20,7 @@ function data = genDataExperiment3(sys, dataGenPars)
     sparseGridFact = dataGenPars.obsMode.sparseGridFact;
   
     % extract sparsity factor and create sparse grid
-    deltat = 1 / sparseGridFact;
+    deltat = 1 / sparseGridFact(2);
     tSparse = t(1:deltat:end);
 
     % create timeseries data on full grid

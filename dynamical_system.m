@@ -469,7 +469,7 @@ classdef dynamical_system
             % parClass.C1.Sigma:    matrix containing the cov. mat. for class 1
             % t:                    vector of times at which the analyt. solution is computed
             % sigmaObs:             number giving the std. of Gaussian observational noise on the data
-            % sparseGridFact:       number givining the factor for grid sparsity
+            % sparseGridFact:       vector giving the min and max factors for grid sparsity
 
             % OUTPUT:         
             % tsData:               struct containing timeseries (field 1) and labels (field 2)
@@ -480,14 +480,19 @@ classdef dynamical_system
 
             % initialize data struct
             observations = struct('truePar', {}, 'timeseries', {}, 'label', {});
-            
+
+            % calculate minimum and maximum number of observations
+            minNumObs = ceil(sparseGridFact(1) * length(t));
+            maxNumObs = ceil(sparseGridFact(2) * length(t));
+
             % generate timeseries from class C0
             count = 0;
             while count < numTrainExamples
 
                 % draw parameter from class distribution, random time points and solve ODE
                 par = mvnrnd(C0.mu, C0.Sigma);
-                tDraw = unifrnd(t(1), t(end), 1, ceil(sparseGridFact * length(t)) - 1);
+                numTimes = randi([minNumObs, maxNumObs]);
+                tDraw = unifrnd(t(1), t(end), 1, numTimes);
                 tRand = [t(1), sort(tDraw)];
                 sol = self.solODE(tRand, par);
                     
@@ -516,7 +521,8 @@ classdef dynamical_system
 
                 % draw parameter from class distribution and solve ODE
                 par = mvnrnd(C1.mu, C1.Sigma);
-                tDraw = unifrnd(t(1), t(end), 1, ceil(sparseGridFact * length(t)) - 1);
+                numTimes = randi([minNumObs, maxNumObs]);
+                tDraw = unifrnd(t(1), t(end), 1, numTimes);
                 tRand = [t(1), sort(tDraw)];
                 sol = self.solODE(tRand, par);
 
@@ -590,7 +596,7 @@ classdef dynamical_system
                     x0_select = unifrnd(lb, ub);
                     for cnt = 1:100
                         x0 = unifrnd(lb, ub);
-                        llogCurrent = fun(x0_select)
+                        llogCurrent = fun(x0_select);
                         llogNew = fun(x0);
                         if ~isinf(llogNew) && llogNew < llogCurrent
                             x0_select = x0;

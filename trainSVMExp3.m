@@ -1,14 +1,6 @@
-function results = trainClassifierExp3(data, experimentPars)
+function results = trainSVMExp3(data, experimentPars)
     
-    % DESCRIPTION: Train SVM classifiers on original and preprocessed data
-    % for different amounts of data and different types of time grids.
-
-    % INPUT:
-    % data:             struct containing binary classification task
-    % experimentPars:   struct containing experiment configurations
-    
-    % OUTPUT:           
-    % results:          struct containing the results of the experiment
+    % Train classifiers on original and preprocessed data for different amounts of data and different levels of noise
     
     % Extract number of noise levels from data set
     numTrExVec = experimentPars.numTrExVec;

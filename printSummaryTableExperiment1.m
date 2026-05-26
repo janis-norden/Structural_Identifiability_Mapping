@@ -1,11 +1,5 @@
 function printSummaryTableExperiment1(filenames_results, options)
     
-    % DESCRIPTION: Prints experiment 1 summary table to command line so it may be copied into a LaTeX table easily.
-
-    % INPUT:
-    % filenames_results:  struct containing the filenames of experiment 1 results saved in folder 'Results/' associated with each of the example models
-    % options:            struct containing options relating to command-line printing
-
     % extract formatting specifications from options
     fspec = options.formatSpec;
 

@@ -1,23 +1,19 @@
-function fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options)
-    % DESCRIPTION: Plots the outcomes of experiment 3.
-
-    % INPUT:
-    % resultsUID:  struct containing the results of experiment 3 for the UID model
-    % options:     struct containing options relating to figure design
-    
-    % OUTPUT:           
-    % fig:         fig MATLAB figure containig the created plot
-
+function fig = plotOutcomesExperiment3(resultsUID, options)
 
     % Extract plot styles
     linestyle_UID = options.plotStyle.linestyle_UID;
     linestyle_UID_SIM = options.plotStyle.linestyle_UID_SIM;
+    linestyle_MLP = options.plotStyle.linestyle_MLP;
     linestyle_width = options.plotStyle.linestyle_width;
     axes_font_size = options.plotStyle.axes_font_size;
     
-    % Unpack training errors
-    genError_UID = resultsUID.outcomes.SVM.gen_error;
-    genError_UID_SIM = resultsUID.outcomes.SVM_SIM.gen_error;
+    % Unpack generalization errors
+    genError_SVM = resultsUID.outcomes.SVM.gen_error;
+    genError_SVM_SIM = resultsUID.outcomes.SVM_SIM.gen_error;
+
+    % remove outlier runs
+    genError_SVM_trim = remove_outliers(genError_SVM);
+    genError_SVM_SIM_trim = remove_outliers(genError_SVM_SIM);
 
     % Extract experiment info
     numTrExVec = resultsUID.experimentPars.numTrExVec;
@@ -25,7 +21,7 @@ function fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     blue = [0 0.4470 0.7410];
     orange = [0.8500 0.3250 0.0980];
-    green = [0.4660 0.6740 0.1880];
+    grey = 0.6 * [1, 1, 1];
 
     if options.plotStyle.fullscreen == 1
         fig = figure('units','normalized','outerposition',[0 0 1 1]);
@@ -40,11 +36,11 @@ function fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options)
    
     % Plot generalization error on dense grid
     nexttile;
-    hold on
+    hold on 
 
-    errorbar(numTrExVec, mean(genError_UID(:, :, 1), 2), std(genError_UID(:, :, 1), 0, 2), Color=orange, LineStyle=linestyle_UID, LineWidth=linestyle_width)
-    errorbar(numTrExVec, mean(genError_UID_SIM(:, :, 1), 2), std(genError_UID_SIM(:, :, 1), 0, 2), Color=blue, LineStyle=linestyle_UID_SIM, LineWidth=linestyle_width)
-    
+    errorbar(numTrExVec, mean(genError_SVM_trim(:, :, 1), 2, 'omitnan'), std(genError_SVM_trim(:, :, 1), 0, 2, 'omitnan'), Color=orange, LineStyle=linestyle_UID, LineWidth=linestyle_width)
+    errorbar(numTrExVec, mean(genError_SVM_SIM_trim(:, :, 1), 2, 'omitnan'), std(genError_SVM_SIM_trim(:, :, 1), 0, 2, 'omitnan'), Color=blue, LineStyle=linestyle_UID_SIM, LineWidth=linestyle_width)
+
     xlim(options.xLimits)
     ylim(options.yLimits_errors)
     xlabel('\# training examples per class', 'Interpreter','latex')
@@ -62,8 +58,9 @@ function fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options)
     nexttile
     hold on
 
-    errorbar(numTrExVec, mean(genError_UID(:, :, 2), 2), std(genError_UID(:, :, 2), 0, 2), Color=orange, LineStyle=linestyle_UID, LineWidth=linestyle_width)
-    errorbar(numTrExVec, mean(genError_UID_SIM(:, :, 2), 2), std(genError_UID_SIM(:, :, 2), 0, 2), Color=blue, LineStyle=linestyle_UID_SIM, LineWidth=linestyle_width)
+    errorbar(numTrExVec, mean(genError_SVM_trim(:, :, 2), 2, 'omitnan'), std(genError_SVM_trim(:, :, 2), 0, 2, 'omitnan'), Color=orange, LineStyle=linestyle_UID, LineWidth=linestyle_width)
+    errorbar(numTrExVec, mean(genError_SVM_SIM_trim(:, :, 2), 2, 'omitnan'), std(genError_SVM_SIM_trim(:, :, 2), 0, 2, 'omitnan'), Color=blue, LineStyle=linestyle_UID_SIM, LineWidth=linestyle_width)
+
 
     xlim(options.xLimits)
     ylim(options.yLimits_errors)
@@ -78,8 +75,9 @@ function fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options)
     nexttile
     hold on
     
-    errorbar(numTrExVec, mean(genError_UID(:, :, 3), 2), std(genError_UID(:, :, 3), 0, 2), Color=orange, LineStyle=linestyle_UID, LineWidth=linestyle_width)
-    errorbar(numTrExVec, mean(genError_UID_SIM(:, :, 3), 2), std(genError_UID_SIM(:, :, 3), 0, 2), Color=blue, LineStyle=linestyle_UID_SIM, LineWidth=linestyle_width)
+    errorbar(numTrExVec, mean(genError_SVM_trim(:, :, 3), 2, 'omitnan'), std(genError_SVM_trim(:, :, 3), 0, 2, 'omitnan'), Color=orange, LineStyle=linestyle_UID, LineWidth=linestyle_width)
+    errorbar(numTrExVec, mean(genError_SVM_SIM_trim(:, :, 3), 2, 'omitnan'), std(genError_SVM_SIM_trim(:, :, 3), 0, 2, 'omitnan'), Color=blue, LineStyle=linestyle_UID_SIM, LineWidth=linestyle_width)
+
 
     xlim(options.xLimits)
     ylim(options.yLimits_errors)
@@ -93,3 +91,35 @@ function fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options)
     % set fontype
     set(findall(gcf,'-property','FontName'),'FontName',options.plotStyle.fontname)
 end
+
+
+
+function A_trim = remove_outliers(A)
+
+    % initialize output array
+    A_trim = A;
+
+    % extract number of columns of A
+    [n_train_vals, ~, n_grids] = size(A);
+    
+    % loop over grids
+    for k = 1:n_grids
+        
+        % loop over values of training examples
+        for i = 1:n_train_vals
+            
+            % find locations of outliers
+            idx_outliers = isoutlier(A(i, :, k), 'percentiles', [10, 90]);
+            
+            % set outlier values to Nan
+            A_trim(i, idx_outliers, k) = nan;
+
+        end
+
+    end
+
+end
+
+
+
+

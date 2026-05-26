@@ -1,14 +1,6 @@
 function results = trainSVMExp1(data, experimentPars)
 
-    % DESCRIPTION: Train SVM classifiers on original and preprocessed data
-    % for different amounts of data and different levels of noise.
-
-    % INPUT:
-    % data:             struct containing binary classification task
-    % experimentPars:   struct containing experiment configurations
-    
-    % OUTPUT:           
-    % results:          struct containing the results of the experiment
+    % Train classifiers on original and preprocessed data for different amounts of data and different levels of noise
     
     % Extract number of noise levels from data set
     numTrExVec = experimentPars.numTrExVec;
@@ -58,7 +50,7 @@ function results = trainSVMExp1(data, experimentPars)
     hyper_params(5).Optimize = experimentPars.HPTuning.optimizeStandardization;
 
     % Loop over different amounts of training data
-    for j = 1:length(numTrExVec)
+    parfor j = 1:length(numTrExVec)
     
         % Averaging runs
         for k = 1:numAvgRuns

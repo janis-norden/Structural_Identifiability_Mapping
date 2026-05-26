@@ -1,12 +1,3 @@
-% DESCRIPTION: The purpose of this script is to visualize the basic idea
-% behind the Structural Identifiability Mapping (SIM). To this end, data is
-% generated for a binary classification task on the toy_model and the
-% resulting example data is plotted both in the space of the original model
-% parameters as well as the space of structurally identifiable
-% combinations. The resulting demonstrates how SIM can simplify a
-% classification task.
-
-
 %% Clear workspace and load dynamical system
 clear; clc; close all;                               % clear workspace
 rng(1)                                               % set random number generator seed for reproducibility

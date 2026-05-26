@@ -1,14 +1,7 @@
 function results = trainClassifierExp2(data, experimentPars)
-    % DESCRIPTION: Train SVM classifiers on original and preprocessed data 
-    % for different amounts of data and different levels of noise.
-
-    % INPUT:
-    % data:             struct containing binary classification task
-    % experimentPars:   struct containing experiment configurations
     
-    % OUTPUT:           
-    % results:          struct containing the results of the experiment
-
+    % Train classifiers on original and preprocessed data for different amounts of data and different levels of noise
+    
     % Extract number of noise levels from data set
     numAvgRuns = experimentPars.numAvgRuns;
     numExUsed = experimentPars.numExUsed;

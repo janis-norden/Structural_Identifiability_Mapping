@@ -1,15 +1,4 @@
 function fig = plotOutcomesExperiment1(resultsID, resultsUID, options)
-    % DESCRIPTION: Plots the outcomes of experiment 1.
-
-    % INPUT:
-    % resultsID:   struct containing the results of experiment 1 for the ID model
-    % resultsUID:  struct containing the results of experiment 1 for the UID model
-    % options:     struct containing options relating to figure design
-    
-    % OUTPUT:           
-    % fig:         fig MATLAB figure containig the created plot
-
-
     % NOTE: ResultsID and ResultsUID need to be obtained from runs with the 
     % same experimental conditions
 

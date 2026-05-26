@@ -34,7 +34,7 @@ dataGenPars.numExamples.test = 200;
 
 % Set times at which to evaluate analytic solution
 dataGenPars.obsMode.t = 0:10:240;                         % full grid
-dataGenPars.obsMode.sparseGridFact = 0.4;                 % sparsegrid/irr.
+dataGenPars.obsMode.sparseGridFact = [0.25, 0.4];         % sparse grid/irr.
 
 % set std. of observational noise (Gaussian) added to timeseries
 dataGenPars.sigmaObs = 10;                      % fixed for this experiment
@@ -58,8 +58,25 @@ experimentPars = configExp3();
 % set increments of training examples at which to train classifier
 experimentPars.numTrExVec = 10:10:dataGenPars.numExamples.train;   
 
-% train classifier for UID model
-resultsUID = trainClassifierExp3(dataUID, experimentPars);
+% train SVM classifier for UID model
+t2 = tic;
+resultsSVM = trainSVMExp3(dataUID, experimentPars);
+tSVM = toc(t2);
+runtimeInfo.tSVM = tSVM;
+
+% train MLP classifier on time series directly using GP imputation
+t3 = tic;
+resultsMLPGP = trainMLPExp3(dataUID, experimentPars, 'gaussian_process');
+tMLPGP = toc(t3);
+runtimeInfo.tMLPGP = tMLPGP;
+resultsMLP.GP = resultsMLPGP;
+
+% train MLP classifier on time series directly using LR imputation
+t4 = tic;
+resultsMLPLR = trainMLPExp3(dataUID, experimentPars, 'linear_regression');
+tMLPLR = toc(t4);
+runtimeInfo.tMLPLR = tMLPLR;
+resultsMLP.LR = resultsMLPLR;
 
 %% postprocessing and plotting 
 close all
@@ -68,13 +85,14 @@ close all
 loadResults = true;
 
 if loadResults & analysis_mode
-    load('Results/pExperiment3_CCM2_202411120525.mat')
-    dataGenPars.numExamples.train = resultsUID.data.dataGenPars.numExamples.train;
+    load('Results/prExperiment3_CCM2_202508051956.mat')
+    dataGenPars.numExamples.train = resultsSVM.data.dataGenPars.numExamples.train;
 end
 
 % set plot styles
 options.plotStyle.linestyle_UID = '--';
 options.plotStyle.linestyle_UID_SIM = '-';
+options.plotStyle.linestyle_MLP = ':';
 
 options.plotStyle.fullscreen = 0;
 options.plotStyle.figuresize = [6 6 18.13 5];
@@ -86,7 +104,7 @@ options.plotStyle.legend_font_size = 8;
 options.plotStyle.linestyle_width = 1;
 
 options.xLimits = [0 dataGenPars.numExamples.train];
-options.yLimits_errors = [0 0.4];
+options.yLimits_errors = [0 0.5];
 
 % set options for printing the PDF
 set(gcf, 'PaperUnits', 'centimeters');
@@ -97,11 +115,11 @@ set(gcf, 'renderer', 'painters');
 
 % create figure with results
 if analysis_mode
-    fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options);
+    fig = plotOutcomesExperiment3(resultsSVM, options);
     print(gcf, '-dpdf', 'Figures/Exp3_CCM2.pdf');
 end
 
 %% save results for later use
 filename = ['Results/Experiment3_', sysUID.name ,'_', datestr(now, 'yyyymmddHHMM'), '.mat'];
 fprintf(['File name: Experiment3_', sysUID.name ,'_', datestr(now, 'yyyymmddHHMM'), '.mat\n'])
-save(filename, 'resultsUID', 'options', 'runtimeInfo')
+save(filename, 'resultsSVM', 'resultsMLP', 'options', 'runtimeInfo')

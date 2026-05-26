@@ -33,8 +33,9 @@ dataGenPars.numExamples.test = 600;
 % Set times at which to evaluate analytic solution
 dataGenPars.obsMode.t = 0:10:240;
 
-% set vector of std. of observational noise (Gaussian) added to timeseries
-dataGenPars.sigmaObsVec = 10:10:60;                 
+% set vector of signal-to-noise ratios for noise (Gaussian) added to timeseries
+dataGenPars.SNRVec = 10 .^ (0:0.5:3);
+
 % ------------------------------------------------------------------------<
 %% generate timeseries and MAP estimates for UID model for different noise levels
 
@@ -64,7 +65,7 @@ close all
 loadResults = true;
 
 if loadResults & analysis_mode
-    load('Results/pExperiment2_CCM4_202411120249.mat')
+    load('Results/prExperiment2_CCM4_202507032038.mat')
     dataGenPars = resultsUID.data.dataGenPars;
 end
 
@@ -78,15 +79,16 @@ options.plotStyle.figuresize = [6 6 9 8];
 options.plotStyle.fontname = 'Sans Serif';
 options.plotStyle.axes_font_size = 8;
 options.plotStyle.legend_font_size = 8;
+options.plotStyle.legend_location = 'best';
 
 options.plotStyle.linestyle_width = 1;
 
-options.xLimits = [8 dataGenPars.sigmaObsVec(end-1)];
-options.yLimits_errors = [0 0.5];
+options.xLimits = [0 3];
+options.yLimits_errors = [0 0.52];
 
 % create figure with results
 if analysis_mode
-    fig = plotOutcomesExperiment2(resultsUID, options);
+    fig = plotOutcomesExperiment2SNR(resultsUID, options);
 
     % set options for printing the PDF
     set(gcf, 'PaperUnits', 'centimeters');

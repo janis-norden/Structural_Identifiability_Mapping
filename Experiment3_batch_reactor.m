@@ -22,7 +22,7 @@ dataGenPars.parClass.C0.mu = [b1, b2, mum, Ks, Y, Kd];
 dataGenPars.parClass.C1.mu = [b1, b2, mum, Ks, 0.8 * Y, Kd];
 
 % set covariance matrix for intra-class variation
-dataGenPars.parClass.C0.Sigma = diag([10^-1, 10^-0, 10^-2, 10^-1, 10^-2, 10^-3].^2);    % reasonable
+dataGenPars.parClass.C0.Sigma = diag([10^-1, 10^-0, 10^-2, 10^-1, 10^-2, 10^-3].^2);
 dataGenPars.parClass.C1.Sigma = diag([10^-1, 10^-0, 10^-2, 10^-1, 10^-2, 10^-3].^2);
 
 % ------------------------------------------------------------------------<
@@ -35,10 +35,10 @@ dataGenPars.numExamples.test = 400;
 
 % Set times at which to evaluate analytic solution
 dataGenPars.obsMode.t = 0:1:12;                           % full grid
-dataGenPars.obsMode.sparseGridFact = 0.4;                 % sparsegrid/irr.
+dataGenPars.obsMode.sparseGridFact = [0.25, 0.4];         % sparse grid/irr.
 
 % set std. of observational noise (Gaussian) added to timeseries
-dataGenPars.sigmaObs = 1;                      % fixed for this experiment
+dataGenPars.sigmaObs = 1;                       % fixed for this experiment
 % ------------------------------------------------------------------------<
 
 %% generate timeseries and maximum likelihood estimates for ID and UID model
@@ -59,8 +59,25 @@ experimentPars = configExp3();
 % set increments of training examples at which to train classifier
 experimentPars.numTrExVec = [10, 25:25:dataGenPars.numExamples.train];   
 
-% train classifier for UID model
-resultsUID = trainClassifierExp3(dataUID, experimentPars);
+% train SVM classifier for UID model
+t2 = tic;
+resultsSVM = trainSVMExp3(dataUID, experimentPars);
+tSVM = toc(t2);
+runtimeInfo.tSVM = tSVM;
+
+% train MLP classifier on time series directly using GP imputation
+t3 = tic;
+resultsMLPGP = trainMLPExp3(dataUID, experimentPars, 'gaussian_process');
+tMLPGP = toc(t3);
+runtimeInfo.tMLPGP = tMLPGP;
+resultsMLP.GP = resultsMLPGP;
+
+% train MLP classifier on time series directly using LR imputation
+t4 = tic;
+resultsMLPLR = trainMLPExp3(dataUID, experimentPars, 'linear_regression');
+tMLPLR = toc(t4);
+runtimeInfo.tMLPLR = tMLPLR;
+resultsMLP.LR = resultsMLPLR;
 
 %% postprocessing and plotting 
 close all
@@ -69,13 +86,14 @@ close all
 loadResults = true;
 
 if loadResults & analysis_mode
-    load('Results/pExperiment3_batch_reactor_202411120450.mat')
-    dataGenPars.numExamples.train = resultsUID.data.dataGenPars.numExamples.train;
+    load('Results/prExperiment3_batch_reactor_202507291952')
+    dataGenPars.numExamples.train = resultsSVM.data.dataGenPars.numExamples.train;
 end
 
 % set plot styles
 options.plotStyle.linestyle_UID = '--';
 options.plotStyle.linestyle_UID_SIM = '-';
+options.plotStyle.linestyle_MLP = ':';
 
 options.plotStyle.fullscreen = 0;
 options.plotStyle.figuresize = [6 6 18.13 5];
@@ -98,11 +116,12 @@ set(gcf, 'renderer', 'painters');
 
 % create figure with results
 if analysis_mode
-    fig = plotOutcomesExperiment3GenErrOnly(resultsUID, options);
+    % fig = plotOutcomesExperiment3GenErrOnly(resultsSVM, options);
+    fig = plotOutcomesExperiment3(resultsSVM, options);
     print(gcf, '-dpdf', 'Figures/Exp3_BR.pdf');
 end
 
 %% save results for later use
 filename = ['Results/Experiment3_', sysUID.name ,'_', datestr(now, 'yyyymmddHHMM'), '.mat'];
 fprintf(['File name: Experiment3_', sysUID.name ,'_', datestr(now, 'yyyymmddHHMM'), '.mat\n'])
-save(filename, 'resultsUID', 'options', 'runtimeInfo')
+save(filename, 'resultsSVM', 'resultsMLP', 'options', 'runtimeInfo')

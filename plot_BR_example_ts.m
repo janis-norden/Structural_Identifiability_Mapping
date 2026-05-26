@@ -1,6 +1,6 @@
-% DESCRIPTION: The purpose of this script is to construct an example of
-% timeseries obtained from the batch_reactor model from two classes used in
-% experiment 2.
+% Plot example time series
+
+% Model: batch_reactor
 
 %% select model
 clear; clc; close all;                               % clear workspace
@@ -10,7 +10,7 @@ sysUID = dynamical_system('batch_reactor', 'UID');   % select example model and 
 % load data from experiment 2
 load('Results/pExperiment2_batch_reactor_202411120208.mat')
 
-noise_level = 4;
+noise_level = 3;
 data = resultsUID.data.noiseLevel(noise_level).mleDataTest.observations;
 
 %% set plot styles and plot
@@ -54,6 +54,7 @@ for i = 1:num_ts_plot
     plot(data(idx_C0(i)).timeseries(1, :), data(idx_C0(i)).timeseries(2, :), Color=blue, LineStyle=linestyle_C0, LineWidth=linestyle_width, Marker=marker_C0)
     plot(data(idx_C1(i)).timeseries(1, :), data(idx_C1(i)).timeseries(2, :), Color=orange, LineStyle=linestyle_C1, LineWidth=linestyle_width, Marker=marker_C1)
 end
+
 
 xlim(x_limits)
 ylim(y_limits)

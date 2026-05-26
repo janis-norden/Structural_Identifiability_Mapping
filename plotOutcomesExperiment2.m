@@ -1,12 +1,6 @@
 function fig = plotOutcomesExperiment2(resultsUID, options)
-    % DESCRIPTION: Plots the outcomes of experiment 2.
-
-    % INPUT:
-    % resultsUID:  struct containing the results of experiment 2 for the UID model
-    % options:     struct containing options relating to figure design
-    
-    % OUTPUT:           
-    % fig:         fig MATLAB figure containig the created plot
+    % NOTE: ResultsID and ResultsUID need to be obtained from runs with the 
+    % same experimental conditions
 
     % Extract plot styles
     linestyle_UID = options.plotStyle.linestyle_UID;

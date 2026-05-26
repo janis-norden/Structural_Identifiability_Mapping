@@ -1,22 +1,30 @@
 function data = genDataExperiment2(sys, dataGenPars)
-    
-    % DESCRIPTION: Generates data for experiment 2. Generates a number of 
-    % training and test data for the binary classification task specified
-    % in dataGenPars. Creates data with varying levels of observational
-    % noise.
-
-    % INPUT:
-    % dataGenPars:  struct containing data generating parameters
-    
-    % OUTPUT:           
-    % data:         struct containing training and test data, and data
-    %               generating parameters
 
     % unpack parameters for experimental setup
     numExamples = dataGenPars.numExamples;
     parClass = dataGenPars.parClass;
     t = dataGenPars.obsMode.t;
-    sigmaObsVec = dataGenPars.sigmaObsVec;
+    SNRVec = dataGenPars.SNRVec;
+
+    % loop over test set and create trajectories to find P_signal
+    tsDataSNR = sys.genBinLabelTSGrid(dataGenPars.numExamples.test, parClass, t, 0);
+    signalPowers = zeros(dataGenPars.numExamples.test, 1);
+    for i = 1: dataGenPars.numExamples.test
+        
+        % extract timeseries
+        ts = tsDataSNR.observations(i).timeseries(2, :);
+
+        % estimate signal power
+        signalPowers(i) = (1 / (t(end) - t(1))) * trapz(t, ts .^2);
+
+    end
+    
+    % find average signal power
+    avgSignalPower = mean(signalPowers);
+    
+    % find sigma values associated with the wanted SNRs
+    sigmaObsVec = sqrt(avgSignalPower ./ SNRVec);
+    dataGenPars.sigmaObsVec = sigmaObsVec;
 
     % init. struct. to hold generated data for different levels of noise
     noiseLevel = struct;

@@ -1,14 +1,6 @@
 function results = trainLDAExp1(data, experimentPars)
     
-    % DESCRIPTION: Train LDA classifiers on original and preprocessed data
-    % for different amounts of data and different levels of noise.
-
-    % INPUT:
-    % data:             struct containing binary classification task
-    % experimentPars:   struct containing experiment configurations
-    
-    % OUTPUT:           
-    % results:          struct containing the results of the experiment
+    % Train classifiers on original and preprocessed data for different amounts of data and different levels of noise
     
     % Extract number of noise levels from data set
     numTrExVec = experimentPars.numTrExVec;

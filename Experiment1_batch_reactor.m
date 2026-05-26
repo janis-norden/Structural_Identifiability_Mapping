@@ -79,7 +79,7 @@ close all
 loadResults = true;
 
 if loadResults & analysis_mode
-    load('Results/pExperiment1_batch_reactor_202411111928.mat')
+    load('Results/prExperiment1_batch_reactor_202506280844.mat')
     dataGenPars.numExamples.train = results_ID_LDA.data.dataGenPars.numExamples.train;
     dataID = results_ID_SVM.data;
     dataUID = results_UID_SVM.data;

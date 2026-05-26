@@ -74,7 +74,7 @@ close all
 loadResults = true;
 
 if loadResults & analysis_mode
-    load('Results/pExperiment1_CCM4_202411112139.mat')
+    load('Results/prExperiment1_CCM4_202506281947.mat')
     dataGenPars.numExamples.train = results_ID_LDA.data.dataGenPars.numExamples.train;
     dataID = results_ID_SVM.data;
     dataUID = results_UID_SVM.data;

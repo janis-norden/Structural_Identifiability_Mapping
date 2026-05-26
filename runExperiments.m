@@ -1,9 +1,4 @@
-% DESCRIPTION: The purpose of this script is to run the indicated 
-% experiment scripts one after the other. The user may specify a time delay 
-% with which the expirments are run by setting numMinutes to the desired
-% number of minutes. Which experiments are run and in which order can be
-% adjusted in the sectioins below. Per default, this script only runs
-% experiment 1 for the batch_reactor model.
+% Run the indicated experiment scripts one after the other
 
 % set delay for start of experiment
 numMinutes = 0;
@@ -26,8 +21,8 @@ save('analysis_mode.mat', 'analysis_mode')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%   EXPERIMENT 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Experiment1_batch_reactor
-
+% Experiment1_batch_reactor
+% 
 % Experiment1_CCM2
 % 
 % Experiment1_CCM4
@@ -46,20 +41,17 @@ Experiment1_batch_reactor
 % 
 % Experiment2_toy_model
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%   EXPERIMENT 3   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Experiment3_batch_reactor
 
-% Experiment3_batch_reactor
-% 
-% Experiment3_CCM2
-% 
-% Experiment3_CCM4
-% 
-% Experiment3_CML
-% 
-% Experiment3_toy_model
+Experiment3_CCM2
 
+Experiment3_CCM4
+
+Experiment3_CML
+
+Experiment3_toy_model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
