@@ -1,7 +1,7 @@
 # Structural Identifiability Mapping
 
 ## Description
-This repository contains the code that was used to perform the analysis and experiments presented in the research paper "On the importance of structural identifiability for machine learning with partially observed dynamical systems", by J. Norden et al.
+This repository contains the code that was used to perform the analysis and experiments presented in the research paper "Structure is information: structural identifiability mappings for machine learning with partially observed dynamical systems", by J. Norden et al.
 
 <img align="right" src="Figures/decision_boundary_toy_model.png">
  
@@ -39,6 +39,7 @@ To do so, check out the section on [General usage](#general-usage).
 - Figure 5 - `Experiment1_batch_reactor.m`, only run cells 2 and 5
 - Figure 6 - `Experiment2_batch_reactor.m`, only run cells 2 and 6
 - Figure 7 - `Experiment3_batch_reactor.m`, only run cells 2 and 6
+- Figure 8 - `Experiment4_prednisone.m`
 The additional results contained in the supplementray material can be reproduced by running the script `Experimenti_system.m` where `i` is replaced by the number of the desired experiment and `system` is replaced by the name of the example system.
 
 **Tables**
@@ -88,7 +89,7 @@ Outputs are saved to the `Results/` folder automatically, from which they can be
 For support contact Janis Norden at j.norden@rug.nl.
 
 ## Authors and acknowledgment
-"On the importance of structural identifiability for machine learning with partially observed dynamical systems" is authored by Janis Norden, Elisa Oostwal, Michael Chappell, Peter Tino and Kerstin Bunte.
+"Structure is information: structural identifiability mappings for machine learning with partially observed dynamical systems" is authored by Janis Norden, Elisa Oostwal, Michael Chappell, Peter Tino and Kerstin Bunte.
 
 ## License
 The project is licensed under the MIT license.
